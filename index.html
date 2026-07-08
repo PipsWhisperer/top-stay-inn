@@ -3,37 +3,443 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Top Stay Inn | Premium Executive Lodge Kasane</title>
+    <title>Top Stay Inn | Premium Hospitality & Safari Transit</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
-    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+        .font-serif {
+            font-family: 'Playfair Display', serif;
+        }
+        [x-cloak] { display: none !important; }
+    </style>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        amber: {
+                            50: '#fefaf0',
+                            100: '#fdf3e1',
+                            600: '#d97706',
+                            700: '#b45309',
+                            800: '#92400e',
+                        },
+                        stone: {
+                            900: '#1c1917',
+                            950: '#0c0a09',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
 </head>
-<body class="bg-[#fcfbfa] text-stone-800 antialiased">
+<body class="bg-stone-950 text-stone-100 selection:bg-amber-700 selection:text-white" 
+      x-data="{ 
+        currentPage: 'home', 
+        lang: 'EN',
+        mobileMenu: false,
+        chatOpen: false,
+        chatStep: 'init',
+        travelProfile: '',
+        chatMessages: [],
+        reviewIndex: 0,
+        translations: {
+            EN: {
+                navHome: 'Home', navSuites: 'Suites & Amenities', navExperiences: 'Aviation & Safaris', navContact: 'Contact & Book',
+                heroTag: 'Luxury Sanctuary & Gateway to Adventure', heroTitle: 'Your Premium Transit to the Wild',
+                heroSubtitle: 'Perfectly situated for corporate executives and wild safari explorers alike. Experience elite comfort with custom regional transits.',
+                ctaBook: 'Reserve Your Experience', ctaExplore: 'Explore Suites',
+                chatTitle: 'Sacrosanct AI Concierge™', chatWelcome: 'Welcome to Top Stay Inn. To customize your journey, please select your primary travel profile:',
+                profileCorporate: 'Corporate / Government', profileSafari: 'Safari & Leisure Exploration',
+                suitesTitle: 'Architectural Comfort', experiencesTitle: 'Curated Expeditions',
+                contactTitle: 'Establish Connection', reviewTitle: 'Guest Journals'
+            },
+            FR: {
+                navHome: 'Accueil', navSuites: 'Suites & Équipements', navExperiences: 'Aviation & Safaris', navContact: 'Contact & Réserver',
+                heroTag: 'Sanctuaire de Luxe & Porte d’Aventure', heroTitle: 'Votre Transit Premium vers la Nature',
+                heroSubtitle: 'Idéalement situé pour les cadres d’entreprise et les explorateurs de safari. Profitez d’un confort d’élite avec transits régionaux sur mesure.',
+                ctaBook: 'Réserver Votre Expérience', ctaExplore: 'Explorer les Suites',
+                chatTitle: 'Concierge IA Sacrosanct™', chatWelcome: 'Bienvenue au Top Stay Inn. Pour personnaliser votre séjour, veuillez choisir votre profil de voyage:',
+                profileCorporate: 'Entreprise / Gouvernement', profileSafari: 'Safari & Exploration de Loisirs',
+                suitesTitle: 'Confort Architectural', experiencesTitle: 'Expéditions Sur Mesure',
+                contactTitle: 'Établir une Connexion', reviewTitle: 'Journaux des Invités'
+            }
+        }
+      }">
 
-    <div id="root"></div>
+    <nav class="sticky top-0 z-50 bg-stone-950/90 backdrop-blur-md border-b border-stone-800/60 transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                <div class="flex items-center gap-3 cursor-pointer" @click="currentPage = 'home'">
+                    <div class="h-10 w-10 rounded-lg bg-gradient-to-br from-amber-600 to-amber-800 flex items-center justify-center font-serif text-xl font-bold text-white shadow-lg">T</div>
+                    <div>
+                        <span class="text-xl font-bold tracking-wider font-serif block text-white">TOP STAY <span class="text-amber-700">INN</span></span>
+                        <span class="text-[10px] tracking-[0.2em] uppercase text-stone-400 block -mt-1">Luxury & Transit</span>
+                    </div>
+                </div>
 
-    <script type="text/babel">
-        function TopStayInnProduction() {
-            const [lang, setLang] = React.useState('EN');
-            const [chatOpen, setChatOpen] = React.useState(true);
-            const [chatStep, setChatStep] = React.useState(1);
-            const [messages, setMessages] = React.useState([
-                { sender: 'bot', text: 'Welcome to Top Stay Inn 🌟\n\nI can instantly configure your perfect stay in Kasane.\n\nWhat brings you to beautiful Botswana?' }
-            ]);
+                <div class="hidden md:flex items-center space-x-8">
+                    <button @click="currentPage = 'home'" :class="currentPage === 'home' ? 'text-amber-600' : 'text-stone-300 hover:text-white'" class="text-sm font-medium transition-colors" x-text="translations[lang].navHome"></button>
+                    <button @click="currentPage = 'suites'" :class="currentPage === 'suites' ? 'text-amber-600' : 'text-stone-300 hover:text-white'" class="text-sm font-medium transition-colors" x-text="translations[lang].navSuites"></button>
+                    <button @click="currentPage = 'experiences'" :class="currentPage === 'experiences' ? 'text-amber-600' : 'text-stone-300 hover:text-white'" class="text-sm font-medium transition-colors" x-text="translations[lang].navExperiences"></button>
+                    <button @click="currentPage = 'contact'" :class="currentPage === 'contact' ? 'text-amber-600' : 'text-stone-300 hover:text-white'" class="text-sm font-medium transition-colors" x-text="translations[lang].navContact"></button>
+                </div>
 
-            const content = {
-                EN: {
-                    brand: "TOP STAY INN", navHome: "Home", navRooms: "Suites", navExperiences: "Activities & Safaris", navReviews: "Guest Feedback", navContact: "Contact Node",
-                    heroTitle: "Your Premier Gateway Comfort Point in Kasane",
-                    heroSub: "An elite executive lodge featuring floor-to-ceiling glass suites, a pristine outdoor pool oasis, and a thatched braai gazebo on Sedudu Road. Perfectly configured for international safaris and high-end corporate transits.",
-                    btnBook: "SECURE RESERVATION", btnExplore: "VIEW INFRASTRUCTURE", previewTitle: "Executive Suite Configurations",
-                    itineraryTitle: "Aeronautical Itineraries & Regional Activities",
-                    reviewsTitle: "Verified Guest Experiences",
-                },
-                FR: {
-                    brand: "TOP STAY INN", navHome: "Accueil", navRooms: "Suites", navExperiences: "Activités & Safaris", navReviews: "Avis Clients", navContact: "Contact",
-                    heroTitle: "Votre Havre de Confort Idéal à Kasane",
+                <div class="hidden md:flex items-center space-x-4">
+                    <div class="flex items-center bg-stone-900 border border-stone-800 rounded-full p-1">
+                        <button @click="lang = 'EN'" :class="lang === 'EN' ? 'bg-amber-700 text-white' : 'text-stone-400'" class="px-3 py-1 rounded-full text-xs font-bold transition-all">EN</button>
+                        <button @click="lang = 'FR'" :class="lang === 'FR' ? 'bg-amber-700 text-white' : 'text-stone-400'" class="px-3 py-1 rounded-full text-xs font-bold transition-all">FR</button>
+                    </div>
+                    <button @click="currentPage = 'contact'" class="bg-amber-700 hover:bg-amber-600 text-white text-xs font-bold uppercase tracking-wider px-5 py-3 rounded-md transition-all shadow-md">
+                        +267 73162006
+                    </button>
+                </div>
+
+                <div class="md:hidden flex items-center gap-4">
+                    <div class="flex items-center bg-stone-900 border border-stone-800 rounded-full p-1">
+                        <button @click="lang = 'EN'" :class="lang === 'EN' ? 'bg-amber-700 text-white' : 'text-stone-400'" class="px-2 py-0.5 rounded-full text-xs font-bold">EN</button>
+                        <button @click="lang = 'FR'" :class="lang === 'FR' ? 'bg-amber-700 text-white' : 'text-stone-400'" class="px-2 py-0.5 rounded-full text-xs font-bold">FR</button>
+                    </div>
+                    <button @click="mobileMenu = !mobileMenu" class="text-stone-400 hover:text-white">
+                        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path x-show="!mobileMenu" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                            <path x-show="mobileMenu" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div x-show="mobileMenu" x-transition x-cloak class="md:hidden bg-stone-900 border-b border-stone-800 px-4 pt-2 pb-6 space-y-3">
+            <button @click="currentPage = 'home'; mobileMenu = false" class="block w-full text-left py-2 text-stone-300 font-medium" x-text="translations[lang].navHome"></button>
+            <button @click="currentPage = 'suites'; mobileMenu = false" class="block w-full text-left py-2 text-stone-300 font-medium" x-text="translations[lang].navSuites"></button>
+            <button @click="currentPage = 'experiences'; mobileMenu = false" class="block w-full text-left py-2 text-stone-300 font-medium" x-text="translations[lang].navExperiences"></button>
+            <button @click="currentPage = 'contact'; mobileMenu = false" class="block w-full text-left py-2 text-stone-300 font-medium" x-text="translations[lang].navContact"></button>
+            <div class="pt-4 border-t border-stone-800">
+                <a href="tel:+26773162006" class="block text-center bg-amber-700 py-3 rounded-md text-sm font-bold tracking-wider uppercase text-white">Call Booking Desk</a>
+            </div>
+        </div>
+    </nav>
+
+    <div x-show="currentPage === 'home'" x-transition class="space-y-32 pb-24">
+        <section class="relative min-h-[90vh] flex items-center justify-center overflow-hidden pt-12">
+            <div class="absolute inset-0 z-0">
+                <img src="hero-bg.webp" alt="Top Stay Inn Exterior" class="w-full h-full object-cover opacity-40 scaling-effect">
+                <div class="absolute inset-0 bg-gradient-to-t from-stone-950 via-stone-950/60 to-transparent"></div>
+                <div class="absolute inset-0 bg-gradient-to-r from-stone-950 via-transparent to-stone-950"></div>
+            </div>
+
+            <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-8">
+                <span class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-700/20 border border-amber-600/30 text-amber-600 text-xs font-semibold tracking-widest uppercase" x-text="translations[lang].heroTag"></span>
+                <h1 class="text-4xl sm:text-6xl lg:text-7xl font-serif font-bold text-white tracking-tight max-w-5xl mx-auto leading-tight" x-text="translations[lang].heroTitle"></h1>
+                <p class="text-stone-300 text-lg sm:text-xl max-w-3xl mx-auto font-light leading-relaxed" x-text="translations[lang].heroSubtitle"></p>
+                
+                <div class="flex flex-col sm:flex-row justify-center items-center gap-4 pt-4">
+                    <button @click="currentPage = 'contact'" class="w-full sm:w-auto bg-amber-700 hover:bg-amber-600 text-white font-bold tracking-wider text-sm uppercase px-8 py-4 rounded-md transition-all transform hover:-translate-y-0.5 shadow-xl" x-text="translations[lang].ctaBook"></button>
+                    <button @click="currentPage = 'suites'" class="w-full sm:w-auto bg-stone-900 hover:bg-stone-800 border border-stone-700 text-stone-200 font-bold tracking-wider text-sm uppercase px-8 py-4 rounded-md transition-all" x-text="translations[lang].ctaExplore"></button>
+                </div>
+            </div>
+
+            <div class="absolute bottom-0 left-0 right-0 border-t border-stone-800/60 bg-stone-950/80 backdrop-blur-md hidden lg:block">
+                <div class="max-w-7xl mx-auto grid grid-cols-4 divide-x divide-stone-800 py-6 text-center">
+                    <div><p class="text-amber-700 font-serif text-2xl font-bold">Premium</p><p class="text-xs text-stone-400 uppercase tracking-widest mt-1">Glass Suites & Comfort</p></div>
+                    <div><p class="text-amber-700 font-serif text-2xl font-bold">Infinite</p><p class="text-xs text-stone-400 uppercase tracking-widest mt-1">Pool & Gazebo Lounge</p></div>
+                    <div><p class="text-amber-700 font-serif text-2xl font-bold">Direct</p><p class="text-xs text-stone-400 uppercase tracking-widest mt-1">Airport & Transit Logistics</p></div>
+                    <div><p class="text-amber-700 font-serif text-2xl font-bold">Aeronautical</p><p class="text-xs text-stone-400 uppercase tracking-widest mt-1">Safari Integration</p></div>
+                </div>
+            </div>
+        </section>
+
+        <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+                <div class="lg:col-span-5 space-y-6">
+                    <div class="w-12 h-0.5 bg-amber-700"></div>
+                    <h2 class="text-3xl sm:text-4xl font-serif font-bold text-white leading-tight">Where International Standards Meet Authentic Local Charm</h2>
+                    <p class="text-stone-400 leading-relaxed font-light">Top Stay Inn serves as a highly calibrated premium nexus for global travellers, aviation professionals, and cross-border expeditions. Enjoy high-speed fiber internet connection, private dining setups, and tailored executive hosting protocols.</p>
+                    <div class="pt-4">
+                        <button @click="currentPage = 'experiences'" class="text-amber-600 hover:text-amber-500 font-bold text-xs tracking-wider uppercase inline-flex items-center gap-2">
+                            Explore Regional Excursions &rarr;
+                        </button>
+                    </div>
+                </div>
+                <div class="lg:col-span-7 relative">
+                    <div class="absolute -top-4 -left-4 w-24 h-24 border-t-2 border-l-2 border-amber-700/40"></div>
+                    <img src="FB_IMG_1783442714349.jpg" alt="Welcoming International Guests" class="w-full h-auto rounded-lg shadow-2xl relative z-10 border border-stone-800">
+                    <div class="absolute -bottom-4 -right-4 w-24 h-24 border-b-2 border-r-2 border-amber-700/40"></div>
+                </div>
+            </div>
+        </section>
+
+        <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 bg-stone-900/40 py-16 rounded-2xl border border-stone-800/60">
+            <div class="text-center space-y-4 mb-12">
+                <h2 class="text-2xl font-serif text-amber-700 font-bold tracking-wider uppercase" x-text="translations[lang].reviewTitle"></h2>
+                <p class="text-stone-400 text-sm tracking-wide">Verified experiences from elite corporate clients and leisure travelers.</p>
+            </div>
+            <div class="relative max-w-4xl mx-auto min-h-[220px] flex flex-col justify-between"
+                 x-data="{
+                    reviews: [
+                        { text: 'The perfect sanctuary after a long cross-border transit. The glass suite architecture offered spectacular light, and the high-speed connectivity allowed me to seamlessly run executive sessions.', author: 'Marcus V., Corporate Consultant' },
+                        { text: 'An exceptional gateway to regional safaris. The team coordinated our regional transit arrangements flawlessly. Returning to the pool side gazebo area in the evening was magnificent.', author: 'Elena R., Luxury Explorer' },
+                        { text: 'Top Stay Inn combines professional execution with incredible warmth. Highly recommended for corporate executives requiring focus and tranquility.', author: 'T. Motsepe, Government Liaison' }
+                    ]
+                 }">
+                <div>
+                    <p class="text-xl sm:text-2xl font-serif italic text-stone-200 text-center leading-relaxed" x-text="'&ldquo;' + reviews[reviewIndex].text + '&rdquo;'"></p>
+                    <p class="text-center text-amber-600 text-xs font-bold uppercase tracking-widest mt-6" x-text="reviews[reviewIndex].author"></p>
+                </div>
+                <div class="flex justify-center gap-3 mt-8">
+                    <button @click="reviewIndex = (reviewIndex - 1 + reviews.length) % reviews.length" class="w-10 h-10 border border-stone-700 rounded-full flex items-center justify-center text-stone-400 hover:text-white hover:border-stone-500 transition-all">&larr;</button>
+                    <button @click="reviewIndex = (reviewIndex + 1) % reviews.length" class="w-10 h-10 border border-stone-700 rounded-full flex items-center justify-center text-stone-400 hover:text-white hover:border-stone-500 transition-all">&rarr;</button>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <div x-show="currentPage === 'suites'" x-transition class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-24">
+        <div class="text-center max-w-3xl mx-auto space-y-4">
+            <span class="text-amber-700 uppercase tracking-widest text-xs font-bold font-serif" x-text="translations[lang].suitesTitle"></span>
+            <h2 class="text-4xl font-serif font-bold text-white">An Environment of Tailored Solitude</h2>
+            <p class="text-stone-400 font-light">Every element of our architecture has been intentionally selected to maximize visual scale, light, and restoration.</p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+            <div class="lg:col-span-7">
+                <img src="room-suite.webp" alt="Luxury Glass Suite" class="w-full h-auto rounded-xl shadow-2xl border border-stone-800">
+            </div>
+            <div class="lg:col-span-5 space-y-6">
+                <span class="text-xs font-bold text-amber-600 uppercase tracking-widest">Signature Room Configuration</span>
+                <h3 class="text-2xl font-serif font-bold text-white">The Premium Glass Array Suite</h3>
+                <p class="text-stone-400 leading-relaxed font-light">Featuring stunning large-format wrap windows framing regional landscapes, fine linens, vibrant scarlet statement accents, integrated cooling, and geometric accents designed for maximum mental clarity.</p>
+                <ul class="space-y-2 text-sm text-stone-300">
+                    <li class="flex items-center gap-3"><span class="w-1.5 h-1.5 rounded-full bg-amber-700"></span> Large Panoramic Premium Glass Wall Structure</li>
+                    <li class="flex items-center gap-3"><span class="w-1.5 h-1.5 rounded-full bg-amber-700"></span> Executive Workspace & High-Output Connectivity</li>
+                    <li class="flex items-center gap-3"><span class="w-1.5 h-1.5 rounded-full bg-amber-700"></span> Premium En-Suite Amenities & Statement Bedding</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center lg:flex-row-reverse">
+            <div class="lg:col-span-5 space-y-6 lg:order-2">
+                <span class="text-xs font-bold text-amber-600 uppercase tracking-widest">Outdoor & Wellness Architecture</span>
+                <h3 class="text-2xl font-serif font-bold text-white">Crystalline Pool & Gazebo Lounge</h3>
+                <p class="text-stone-400 leading-relaxed font-light">Our courtyard opens up to a perfectly aligned crystal-blue pool structure and an integrated timber lodge-style gazebo shelter. Ideal for evening strategic reflection, cocktail relaxation, or hosting collaborative delegate dinners.</p>
+                <ul class="space-y-2 text-sm text-stone-300">
+                    <li class="flex items-center gap-3"><span class="w-1.5 h-1.5 rounded-full bg-amber-700"></span> Intimate Open-Air Gazebo Dining & Braai Setup</li>
+                    <li class="flex items-center gap-3"><span class="w-1.5 h-1.5 rounded-full bg-amber-700"></span> Pristine Swimming Pool with Architectural Waterfall</li>
+                    <li class="flex items-center gap-3"><span class="w-1.5 h-1.5 rounded-full bg-amber-700"></span> Manicured Lawns for Small High-End Events</li>
+                </ul>
+            </div>
+            <div class="lg:col-span-7 lg:order-1">
+                <img src="unnamed (4).webp" alt="Pool & Gazebo Area" class="w-full h-auto rounded-xl shadow-2xl border border-stone-800">
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+            <div class="lg:col-span-7">
+                <img src="dining.webp" alt="Top Stay Inn Dining Room" class="w-full h-auto rounded-xl shadow-2xl border border-stone-800">
+            </div>
+            <div class="lg:col-span-5 space-y-6">
+                <span class="text-xs font-bold text-amber-600 uppercase tracking-widest">Culinary Integration</span>
+                <h3 class="text-2xl font-serif font-bold text-white">Bespoke Corporate & Group Dining</h3>
+                <p class="text-stone-400 leading-relaxed font-light">Enjoy curated morning assortments and premium catering layouts customized to international palates. Our dining space provides a discrete, distraction-free environment ideal for strategic planning or morning brief sessions.</p>
+            </div>
+        </div>
+    </div>
+
+    <div x-show="currentPage === 'experiences'" x-transition class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-16">
+        <div class="text-center max-w-3xl mx-auto space-y-4">
+            <span class="text-amber-700 uppercase tracking-widest text-xs font-bold font-serif" x-text="translations[lang].experiencesTitle"></span>
+            <h2 class="text-4xl font-serif font-bold text-white">Unlocking Regional Transit & High Adventure</h2>
+            <p class="text-stone-400 font-light">Top Stay Inn is strategically configured to coordinate with localized aeronautical transfers, private safaris, and regional transits across major wilderness hubs.</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 pt-8">
+            <div class="bg-stone-900 border border-stone-800 p-8 rounded-xl space-y-4">
+                <div class="w-12 h-12 bg-amber-700/10 border border-amber-600/30 text-amber-600 flex items-center justify-center rounded-lg text-xl font-bold font-serif">01</div>
+                <h4 class="text-xl font-serif font-bold text-white">Aeronautical Safaris</h4>
+                <p class="text-stone-400 text-sm leading-relaxed">Direct alignment with charter flight operations mapping out local and international flight transits over spectacular river basins and wildlife frontiers.</p>
+            </div>
+            <div class="bg-stone-900 border border-stone-800 p-8 rounded-xl space-y-4">
+                <div class="w-12 h-12 bg-amber-700/10 border border-amber-600/30 text-amber-600 flex items-center justify-center rounded-lg text-xl font-bold font-serif">02</div>
+                <h4 class="text-xl font-serif font-bold text-white">Curated Game Drives</h4>
+                <p class="text-stone-400 text-sm leading-relaxed">Experience deep wilderness safaris arranged with seasoned professional trackers and premium fleet vehicles designed for immersive encounters.</p>
+            </div>
+            <div class="bg-stone-900 border border-stone-800 p-8 rounded-xl space-y-4">
+                <div class="w-12 h-12 bg-amber-700/10 border border-amber-600/30 text-amber-600 flex items-center justify-center rounded-lg text-xl font-bold font-serif">03</div>
+                <h4 class="text-xl font-serif font-bold text-white">Seamless Regional Transit</h4>
+                <p class="text-stone-400 text-sm leading-relaxed">Executive airport pick-ups, international cross-border support, and private transport fleet management tracking flight schedules accurately.</p>
+            </div>
+        </div>
+
+        <div class="relative rounded-2xl overflow-hidden min-h-[400px] flex items-center p-8 sm:p-12 border border-stone-800">
+            <div class="absolute inset-0 z-0">
+                <img src="FB_IMG_1783442721825.jpg" alt="Top Stay Inn Evening View" class="w-full h-full object-cover opacity-50">
+                <div class="absolute inset-0 bg-gradient-to-r from-stone-950 via-stone-950/70 to-transparent"></div>
+            </div>
+            <div class="relative z-10 max-w-2xl space-y-6">
+                <h3 class="text-3xl font-serif font-bold text-white">Ready for Twilight Receptions</h3>
+                <p class="text-stone-300 font-light">As day transitions to night, our estate glows under masterfully placed architectural lighting, highlighting premium perimeter protection systems and secured gated architectures optimized for diplomatic and corporate security requirements.</p>
+                <button @click="currentPage = 'contact'" class="bg-amber-700 hover:bg-amber-600 text-white font-bold text-xs uppercase tracking-wider px-6 py-3 rounded transition-all">Coordinate Booking</button>
+            </div>
+        </div>
+    </div>
+
+    <div x-show="currentPage === 'contact'" x-transition class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+            <div class="lg:col-span-5 space-y-8">
+                <div>
+                    <span class="text-amber-700 uppercase tracking-widest text-xs font-bold font-serif" x-text="translations[lang].contactTitle"></span>
+                    <h2 class="text-4xl font-serif font-bold text-white mt-2">Connect Instantly</h2>
+                    <p class="text-stone-400 font-light mt-4">Reach out to our round-the-clock booking team to process accommodation requests, charter transits, or private corporate retreat frameworks.</p>
+                </div>
+
+                <div class="space-y-4 border-t border-stone-800 pt-6">
+                    <div>
+                        <span class="text-[10px] uppercase text-stone-500 tracking-widest block">Direct Mobile & WhatsApp Desk</span>
+                        <a href="tel:+26773162006" class="text-xl font-bold text-amber-600 hover:underline block">+267 73162006</a>
+                        <a href="tel:+26773743399" class="text-xl font-bold text-stone-300 hover:underline block">+267 73743399</a>
+                    </div>
+                    <div>
+                        <span class="text-[10px] uppercase text-stone-500 tracking-widest block">Alternative Regional Landline</span>
+                        <a href="tel:+2676241222" class="text-lg font-medium text-stone-300 hover:underline block">+267 6241222</a>
+                    </div>
+                    <div>
+                        <span class="text-[10px] uppercase text-stone-500 tracking-widest block">Geographic Nexus</span>
+                        <p class="text-sm text-stone-300 font-light">Kasane Frontier Hub, Botswana</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="lg:col-span-7 bg-stone-900 border border-stone-800 p-8 rounded-xl shadow-xl" x-data="{ bookingSubmitted: false }">
+                <div x-show="!bookingSubmitted" class="space-y-6">
+                    <h3 class="text-xl font-serif font-bold text-white border-b border-stone-800 pb-4">Secure Accommodation Framework</h3>
+                    
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-xs font-medium uppercase tracking-wider text-stone-400 mb-2">Full Legal Name</label>
+                            <input type="text" class="w-full bg-stone-950 border border-stone-800 rounded px-4 py-3 text-sm text-white focus:outline-none focus:border-amber-700">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium uppercase tracking-wider text-stone-400 mb-2">Corporate Email Address</label>
+                            <input type="email" class="w-full bg-stone-950 border border-stone-800 rounded px-4 py-3 text-sm text-white focus:outline-none focus:border-amber-700">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-xs font-medium uppercase tracking-wider text-stone-400 mb-2">Preferred Suite Class</label>
+                            <select class="w-full bg-stone-950 border border-stone-800 rounded px-4 py-3 text-sm text-stone-300 focus:outline-none focus:border-amber-700">
+                                <option>The Premium Glass Array Suite</option>
+                                <option>Executive Group Core Package</option>
+                                <option>Aviation Transit Package</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium uppercase tracking-wider text-stone-400 mb-2">Target Profile Type</label>
+                            <select class="w-full bg-stone-950 border border-stone-800 rounded px-4 py-3 text-sm text-stone-300 focus:outline-none focus:border-amber-700">
+                                <option>Corporate / Government Delegation</option>
+                                <option>Wild Safari / Leisure Exploration</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-medium uppercase tracking-wider text-stone-400 mb-2">Specialized Transit Routing Needs (Optional)</label>
+                        <textarea rows="3" class="w-full bg-stone-950 border border-stone-800 rounded px-4 py-3 text-sm text-white focus:outline-none focus:border-amber-700" placeholder="Aeronautical safaris, local airport transfers, cross-border custom schedules..."></textarea>
+                    </div>
+
+                    <button @click="bookingSubmitted = true" class="w-full bg-amber-700 hover:bg-amber-600 text-white font-bold tracking-wider text-xs uppercase py-4 rounded transition-all">
+                        Transmit Registration Request
+                    </button>
+                </div>
+
+                <div x-show="bookingSubmitted" x-cloak class="text-center py-12 space-y-6">
+                    <div class="w-16 h-16 bg-amber-700/20 text-amber-600 rounded-full flex items-center justify-center mx-auto text-2xl font-bold border border-amber-600/30">&checkmark;</div>
+                    <h3 class="text-2xl font-serif font-bold text-white">Transmission Authenticated</h3>
+                    <p class="text-stone-400 text-sm max-w-md mx-auto">Your premium suite scheduling data has arrived at our central routing hub. An executive booking officer will establish phone or digital confirmation shortly.</p>
+                    <button @click="bookingSubmitted = false" class="text-amber-600 text-xs uppercase font-bold tracking-wider hover:underline">New Request Framework</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="bg-stone-950 border-t border-stone-900 py-12 text-stone-500 text-xs">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row justify-between items-center gap-6">
+            <div class="flex items-center gap-3">
+                <span class="text-stone-300 font-serif font-bold tracking-wider">TOP STAY <span class="text-amber-700">INN</span></span>
+                <span class="text-stone-700">|</span>
+                <span>&copy; 2026 Top Stay Inn Hospitality Services.</span>
+            </div>
+            <div class="flex space-x-6 text-stone-400">
+                <span class="hover:text-white cursor-pointer" @click="currentPage = 'home'">Home</span>
+                <span class="hover:text-white cursor-pointer" @click="currentPage = 'suites'">Suites</span>
+                <span class="hover:text-white cursor-pointer" @click="currentPage = 'experiences'">Aviation & Safaris</span>
+                <span class="hover:text-white cursor-pointer" @click="currentPage = 'contact'">Contact Desk</span>
+            </div>
+        </div>
+    </footer>
+
+    <div class="fixed bottom-6 right-6 z-50" x-cloak>
+        <button @click="chatOpen = !chatOpen; if(chatStep==='init') { chatStep='welcome' }" 
+                class="bg-amber-700 hover:bg-amber-600 text-white w-14 h-14 rounded-full flex items-center justify-center shadow-2xl transition-transform hover:scale-105 border border-amber-600">
+            <svg x-show="!chatOpen" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+            <svg x-show="chatOpen" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+
+        <div x-show="chatOpen" x-transition class="absolute bottom-16 right-0 w-80 sm:w-96 bg-stone-900 border border-stone-800 rounded-xl shadow-2xl overflow-hidden flex flex-col max-h-[480px]">
+            <div class="bg-gradient-to-r from-amber-800 to-amber-700 p-4 border-b border-stone-700 flex justify-between items-center">
+                <div>
+                    <h4 class="text-sm font-bold text-white font-serif" x-text="translations[lang].chatTitle"></h4>
+                    <span class="text-[9px] text-amber-200 tracking-wider uppercase block">Operated via Agentic Workflow Architecture</span>
+                </div>
+                <div class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></div>
+            </div>
+
+            <div class="p-4 flex-1 overflow-y-auto space-y-4 min-h-[300px]">
+                <div class="space-y-2">
+                    <p class="text-xs bg-stone-950 p-3 rounded-lg text-stone-300 border border-stone-800" x-text="translations[lang].chatWelcome"></p>
+                </div>
+
+                <div x-show="chatStep === 'welcome'" class="space-y-2 pt-2">
+                    <button @click="travelProfile = 'Corporate'; chatStep = 'corporate_profile'" class="w-full text-left bg-stone-800 hover:bg-stone-700 text-xs p-3 rounded text-amber-600 font-medium transition-colors" x-text="translations[lang].profileCorporate"></button>
+                    <button @click="travelProfile = 'Safari'; chatStep = 'safari_profile'" class="w-full text-left bg-stone-800 hover:bg-stone-700 text-xs p-3 rounded text-amber-600 font-medium transition-colors" x-text="translations[lang].profileSafari"></button>
+                </div>
+
+                <div x-show="chatStep === 'corporate_profile'" class="space-y-3">
+                    <div class="text-right"><span class="inline-block bg-amber-700 text-white text-xs px-3 py-1.5 rounded-lg font-medium" x-text="translations[lang].profileCorporate"></span></div>
+                    <div class="text-xs bg-stone-950 p-3 rounded-lg text-stone-300 border border-stone-800 space-y-2">
+                        <p class="font-serif font-bold text-white">💼 Corporate Protocol Initialized.</p>
+                        <p>We supply high-efficiency fiber routing setup, early morning breakfast frameworks, and secure gate entries. Our drivers execute prompt airport pickup protocols aligned with commercial flight manifests.</p>
+                        <button @click="currentPage='contact'; chatOpen=false" class="w-full bg-amber-700 text-white font-bold tracking-wider text-[10px] uppercase py-2 rounded mt-2">Connect to Executive Agent</button>
+                    </div>
+                </div>
+
+                <div x-show="chatStep === 'safari_profile'" class="space-y-3">
+                    <div class="text-right"><span class="inline-block bg-amber-700 text-white text-xs px-3 py-1.5 rounded-lg font-medium" x-text="translations[lang].profileSafari"></span></div>
+                    <div class="text-xs bg-stone-950 p-3 rounded-lg text-stone-300 border border-stone-800 space-y-2">
+                        <p class="font-serif font-bold text-white">🦁 Safari Routing Framework Activated.</p>
+                        <p>Welcome Explorer. We maximize upselling integrations for custom aeronautical safaris across the major national game reserves, sunset cruises on local channels, and complete cross-border transit logistics.</p>
+                        <button @click="currentPage='experiences'; chatOpen=false" class="w-full bg-amber-700 text-white font-bold tracking-wider text-[10px] uppercase py-2 rounded mt-2">View Safari Packages</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="p-3 border-t border-stone-800 bg-stone-950/80 flex justify-between items-center">
+                <button @click="chatStep = 'welcome'; travelProfile = ''" class="text-[10px] uppercase font-bold text-stone-500 hover:text-amber-600">&lsaquo; Reset Flow</button>
+                <span class="text-[9px] text-stone-600 font-mono">Secure TLS Port Active</span>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+
                     heroSub: "Un établissement d'exception comprenant des suites exécutives premium, une piscine extérieure étincelante et un gazebo traditionnel pour barbecue. Parfaitement configuré pour les safaris internationaux et les voyageurs d'affaires.",
                     btnBook: "RÉSERVER VOTRE SÉJOUR", btnExplore: "EXPLOREZ L'INFRASTRUCTURE", previewTitle: "Configurations des Suites Exécutives",
                     itineraryTitle: "Itinéraires Aéronautiques & Activités Régionales",
